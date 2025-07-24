@@ -1,7 +1,8 @@
 AI Health Companion
 Welcome to the AI Health Companion, a full-stack web application designed to provide users with personalized 7-day diet and exercise plans. Powered by OpenAI, this application calculates a user's BMI and generates a comprehensive health plan tailored to their activity level, dietary preferences, and allergies, with a focus on authentic Andhra and Telangana cuisine.
 
-###✨ Features
+
+✨ Features
 User Authentication: Secure user registration and login system.
 
 Personalized Dashboard: A central hub for each user to track their progress and view their history.
@@ -82,8 +83,11 @@ docker-compose down
 
 .
 ├── data/                     # Persisted database is stored here
+
 ├── .env                      # Stores the secret API key (you must create this)
+
 ├── .gitignore                # Specifies files for Git to ignore
+
 ├── backend_server.py         # The Flask/GraphQL backend server
 ├── database_setup.py         # (Legacy) Script to initialize the database schema
 ├── Dockerfile.backend        # Docker instructions for the backend
