@@ -8,5 +8,6 @@ echo "Initializing database..."
 python -c 'from backend_server import init_db; init_db()'
 
 # Start the Gunicorn server to serve the application
-echo "Starting Gunicorn server..."
-exec gunicorn --bind 0.0.0.0:5001 backend_server:app
+# Use the PORT environment variable provided by Render, defaulting to 5001
+echo "Starting Gunicorn server on port ${PORT:-5001}..."
+exec gunicorn --bind 0.0.0.0:${PORT:-5001} backend_server:app
