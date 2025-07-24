@@ -1,5 +1,5 @@
 # backend_server.py
-# This version includes an updated health check endpoint to handle HEAD requests from Render.
+# This is the full-featured GraphQL server, configured for local development.
 
 import sqlite3
 import json
@@ -24,6 +24,10 @@ DB_PATH = os.path.join(DATA_DIR, "diet_planner.db")
 
 # --- Database Initialization ---
 def init_db():
+    """
+    Initializes the database and creates tables if they don't exist.
+    This function also ensures the data directory exists.
+    """
     os.makedirs(DATA_DIR, exist_ok=True)
     conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
@@ -73,12 +77,14 @@ def init_db():
 
 # --- Database Helper Functions ---
 def get_db_connection():
+    """Establishes a connection to the SQLite database."""
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
 # --- Password Hashing ---
 def hash_password(password):
+    """Hashes a password using SHA256 for secure storage."""
     return hashlib.sha256(password.encode()).hexdigest()
 
 # --- GraphQL Schema Definition (SDL) ---
@@ -279,12 +285,6 @@ app = Flask(__name__)
 schema = make_executable_schema(type_defs, query, mutation)
 explorer = ExplorerGraphiQL()
 
-# --- UPDATED: Health Check Endpoint now accepts HEAD requests ---
-@app.route("/", methods=["GET", "HEAD"])
-def health_check():
-    """A simple health check endpoint that Render can use."""
-    return "OK", 200
-
 @app.route("/graphql", methods=["GET"])
 def graphql_playground():
     return explorer.html(None), 200
@@ -297,5 +297,7 @@ def graphql_server():
     return jsonify(result), status_code
 
 if __name__ == "__main__":
+    # This init_db() call is for local development and will be
+    # handled by the startup.sh script in the Docker environment.
     init_db()
     app.run(debug=True, port=5001)
