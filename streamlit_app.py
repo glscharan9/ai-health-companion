@@ -10,7 +10,7 @@ import pandas as pd
 from datetime import datetime
 
 # --- Configuration ---
-GRAPHQL_API_URL = "https://ai-health-backend.onrender.com/graphql"
+GRAPHQL_API_URL = "http://localhost:5001/graphql"  # Update this to your backend URL
 
 # --- Custom CSS for Vibrant UI ---
 def local_css():
