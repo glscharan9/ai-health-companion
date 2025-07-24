@@ -79,6 +79,7 @@ To stop the application, press Ctrl + C in the terminal where Docker Compose is 
 docker-compose down
 
 📁 File Structure
+
 .
 ├── data/                     # Persisted database is stored here
 ├── .env                      # Stores the secret API key (you must create this)
