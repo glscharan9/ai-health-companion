@@ -1,7 +1,5 @@
 # streamlit_app.py
-# This is the full-featured, multi-page Streamlit frontend.
 # This version includes a complete visual overhaul with custom CSS for a vibrant UI.
-# Run this with: streamlit run streamlit_app.py
 
 import streamlit as st
 import requests
@@ -10,7 +8,7 @@ import pandas as pd
 from datetime import datetime
 
 # --- Configuration ---
-GRAPHQL_API_URL = "http://localhost:5001/graphql"  # Update this to your backend URL
+GRAPHQL_API_URL = "http://backend:5001/graphql"
 
 # --- Custom CSS for Vibrant UI ---
 def local_css():
@@ -140,10 +138,16 @@ def display_plan_details(plan_data, dietary_preference):
                                     st.error("Could not fetch recipe.")
 
     with exercise_tab:
+        if not plan_data['generated_plan']['exercises']:
+            st.warning("No exercise plan was generated for this entry.")
+            return
         for exercise in plan_data['generated_plan']['exercises']:
             st.markdown(f"**{exercise['day']}:** {exercise['activity']}")
 
     with shopping_tab:
+        if not plan_data['generated_plan']['shoppingList']:
+            st.warning("No shopping list was generated for this entry.")
+            return
         for category in plan_data['generated_plan']['shoppingList']:
             st.markdown(f"##### {category['category']}")
             for item in category['items']:
@@ -154,14 +158,20 @@ def login_page():
     st.header("Welcome to your AI Health Companion")
     
     login_tab, register_tab = st.tabs(["Login", "Register"])
-    # ... (rest of the login/register logic is unchanged)
+
     with login_tab:
         with st.form("login_form"):
             username = st.text_input("Username")
             password = st.text_input("Password", type="password")
             submitted = st.form_submit_button("Login")
             if submitted:
-                query = "mutation LoginUser($username: String!, $password: String!) { loginUser(username: $username, password: $password) { success message user { id username } } }"
+                query = """
+                    mutation LoginUser($username: String!, $password: String!) {
+                        loginUser(username: $username, password: $password) {
+                            success message user { id username }
+                        }
+                    }
+                """
                 result = graphql_request(query, {"username": username, "password": password})
                 if result and result.get('data') and result['data']['loginUser']['success']:
                     st.session_state.logged_in = True
@@ -169,20 +179,32 @@ def login_page():
                     st.session_state.page = "dashboard"
                     st.rerun()
                 else:
-                    st.error(result['data']['loginUser']['message'] if result and result.get('data') else "Login failed.")
+                    message = "Login failed."
+                    if result and result.get('data'):
+                        message = result['data']['loginUser']['message']
+                    st.error(message)
+
     with register_tab:
         with st.form("register_form"):
             username = st.text_input("Choose a Username")
             password = st.text_input("Choose a Password", type="password")
             submitted = st.form_submit_button("Register")
             if submitted:
-                query = "mutation RegisterUser($username: String!, $password: String!) { registerUser(username: $username, password: $password) { success message user { id username } } }"
+                query = """
+                    mutation RegisterUser($username: String!, $password: String!) {
+                        registerUser(username: $username, password: $password) {
+                            success message user { id username }
+                        }
+                    }
+                """
                 result = graphql_request(query, {"username": username, "password": password})
                 if result and result.get('data') and result['data']['registerUser']['success']:
                     st.success("Registration successful! Please login.")
                 else:
-                    st.error(result['data']['registerUser']['message'] if result and result.get('data') else "Registration failed.")
-
+                    message = "Registration failed."
+                    if result and result.get('data'):
+                        message = result['data']['registerUser']['message']
+                    st.error(message)
 
 # --- Page 2: User Dashboard (History & Progress) ---
 def dashboard_page():
@@ -329,6 +351,7 @@ def planner_page():
     if 'generated_plan' in st.session_state and st.session_state.generated_plan:
         plan_data = st.session_state.generated_plan
         st.header("Your New Plan is Ready!")
+
         bmi = plan_data['bmi']
         bmi_category = ""
         if bmi < 18.5: bmi_category = "Underweight"
@@ -337,6 +360,7 @@ def planner_page():
         else: bmi_category = "Obesity"
         st.metric(label="Your Calculated BMI for this Plan", value=f"{bmi}", delta=bmi_category)
         st.divider()
+        
         display_plan_details(plan_data, plan_data['dietary_preference'])
 
 
