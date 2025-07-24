@@ -1,6 +1,5 @@
 # backend_server.py
-# This version includes stricter AI instructions to ensure only
-# Andhra & Telangana dishes are included in the diet plan.
+# This version includes a health check endpoint to ensure stability on Render.
 
 import sqlite3
 import json
@@ -194,14 +193,13 @@ def resolve_generate_diet_plan(_, info, userId, weight, height, activityLevel, i
         allergies_text = f"The user is allergic to the following and these ingredients must be completely avoided: {', '.join(allergies)}." if allergies else "The user has no listed allergies."
         user_prompt = f"""
         Please generate a comprehensive 7-day health plan based on the following user details:
+        - Cuisine Style: Andhra & Telangana
         - User BMI: {bmi}
         - Activity Level: '{activityLevel}'
         - Dietary Preference: '{dietaryPreference}'
         - Allergies: {allergies_text}
         - Include a cheat meal this week: {'Yes' if includeCheatMeal else 'No'}
-
         CRITICAL INSTRUCTION: All suggested dishes in the diet plan MUST be authentic and traditional dishes from the Andhra or Telangana regions of India. Do not include generic or North Indian dishes.
-
         Ensure the plan is balanced, varied, and appropriate for the user's profile.
         """
         completion = openai.chat.completions.create(model="gpt-3.5-turbo-1106", response_format={"type": "json_object"}, messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}])
@@ -280,6 +278,12 @@ def resolve_get_recipe(_, info, dishName):
 app = Flask(__name__)
 schema = make_executable_schema(type_defs, query, mutation)
 explorer = ExplorerGraphiQL()
+
+# --- NEW: Health Check Endpoint ---
+@app.route("/", methods=["GET"])
+def health_check():
+    """A simple health check endpoint that Render can use."""
+    return "OK", 200
 
 @app.route("/graphql", methods=["GET"])
 def graphql_playground():
