@@ -1,5 +1,5 @@
 # backend_server.py
-# This version includes a health check endpoint to ensure stability on Render.
+# This version includes an updated health check endpoint to handle HEAD requests from Render.
 
 import sqlite3
 import json
@@ -279,8 +279,8 @@ app = Flask(__name__)
 schema = make_executable_schema(type_defs, query, mutation)
 explorer = ExplorerGraphiQL()
 
-# --- NEW: Health Check Endpoint ---
-@app.route("/", methods=["GET"])
+# --- UPDATED: Health Check Endpoint now accepts HEAD requests ---
+@app.route("/", methods=["GET", "HEAD"])
 def health_check():
     """A simple health check endpoint that Render can use."""
     return "OK", 200
