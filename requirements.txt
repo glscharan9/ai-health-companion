@@ -1,0 +1,8 @@
+streamlit
+requests
+pandas
+openai
+flask
+ariadne
+python-dotenv
+gunicorn

@@ -1,0 +1,18 @@
+# Environment variables
+.env
+
+# SQLite database
+/data/
+diet_planner.db
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# VS Code settings
+.vscode/
+
+# Virtual environment
+.venv/
+venv/

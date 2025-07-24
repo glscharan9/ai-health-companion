@@ -1,0 +1,39 @@
+# docker-compose.yml
+
+services:
+  # The Backend Service
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: diet_planner_backend
+    restart: unless-stopped
+    volumes:
+      # Mount a data directory to persist the database
+      - ./data:/app/data
+    env_file:
+      # Load the API key from the .env file
+      - ./.env
+    networks:
+      - diet-app-network
+
+  # The Frontend Service
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: diet_planner_frontend
+    restart: unless-stopped
+    ports:
+      # Map the container's port 8501 to your local machine's port 8501
+      - "8501:8501"
+    depends_on:
+      # Wait for the backend to be ready before starting
+      - backend
+    networks:
+      - diet-app-network
+
+# Define the network for communication
+networks:
+  diet-app-network:
+    driver: bridge
