@@ -1,7 +1,7 @@
 AI Health Companion
 Welcome to the AI Health Companion, a full-stack web application designed to provide users with personalized 7-day diet and exercise plans. Powered by OpenAI, this application calculates a user's BMI and generates a comprehensive health plan tailored to their activity level, dietary preferences, and allergies, with a focus on authentic Andhra and Telangana cuisine.
 
-✨ Features
+###✨ Features
 User Authentication: Secure user registration and login system.
 
 Personalized Dashboard: A central hub for each user to track their progress and view their history.
@@ -14,7 +14,7 @@ Exercise Plan: A complementary weekly exercise routine.
 
 Shopping List: An automatically generated, categorized grocery list.
 
-Interactive Meal Options:
+###Interactive Meal Options:
 
 Swap Meals: Don't like a suggestion? Swap it for a nutritionally similar alternative.
 
@@ -30,7 +30,7 @@ Common Allergies (Nuts, Gluten, etc.)
 
 Dockerized Environment: The entire application is containerized using Docker and Docker Compose for easy setup and deployment.
 
-🛠️ Tech Stack
+###🛠️ Tech Stack
 Frontend: Streamlit
 
 Backend: Python, Flask, Ariadne (for GraphQL)
